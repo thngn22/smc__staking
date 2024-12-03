@@ -88,7 +88,7 @@ describe("smc-pool-banking", () => {
     //Step 4: Add mintToken to whitelist
 
     //Step 5: Staking mintToken into the pool
-    const stakingAmount = new anchor.BN(500); // Staking 500 tokens
+    const stakingAmount = new anchor.BN(200);
     await program.methods
       .staking(stakingAmount)
       .accounts({
@@ -110,6 +110,17 @@ describe("smc-pool-banking", () => {
       "The pool token account should reflect the Stakinged amount"
     );
     console.log("poolTokenBalance before with draw :>> ", poolTokenBalance);
+
+    await program.methods
+      .staking(stakingAmount)
+      .accounts({
+        userAta,
+        poolAta,
+        userPoolAccount: poolAccount.publicKey,
+        userAuthority: payer.publicKey,
+      })
+      .signers([payer])
+      .rpc();
 
     // Assert pool account balance after Staking
     let userTokenBalance = await provider.connection.getTokenAccountBalance(
